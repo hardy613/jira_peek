@@ -57,9 +57,9 @@ impl Params {
 
     fn new() -> Params {
         Params {
-            user: env::var("JIRA_USER").expect("$JIRA_HOST is not set."),
-            pass: env::var("JIRA_PASS").expect("$JIRA_USER is not set."),
-            host: env::var("JIRA_HOST").expect("$JIRA_PASS is not set."),
+            user: env::var("JIRA_USER").expect("$JIRA_USER is not set."),
+            pass: env::var("JIRA_PASS").expect("$JIRA_PASS is not set."),
+            host: env::var("JIRA_HOST").expect("$JIRA_HOST is not set."),
             project: Params::project_from_file().unwrap(), 
         }
     }
