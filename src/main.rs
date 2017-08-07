@@ -191,7 +191,7 @@ fn fetch_top_5(params: &Params) -> Result<reqwest::Response, reqwest::Error> {
     request.send() 
 }
 
-fn start_ticket(key: &str)  -> Result<(), &str>{
+fn start_ticket(key: &str) -> Result<(), &str>{
     let mut path: Option<&str> = None;
        
     if Path::new("./.git").is_dir() {
@@ -211,23 +211,37 @@ fn start_ticket(key: &str)  -> Result<(), &str>{
 
             match fetch {
                 Ok(_) => {
-                    let cmd = Command::new("git") 
+                    let branch_cmd = Command::new("git") 
                         .arg("checkout")
                         .arg("-b")
-                        .arg(&key)
+                        .arg(key)
                         .arg("origin/develop")
                         .current_dir(dir)
-                        .output().expect("Error");
-                    if cmd.status.success() {
+                        .output()
+                        .expect("git checkout -b command failed to start");
+                    
+                    if branch_cmd.status.success() {
                         Ok(())
                     } else {
-                        Err("Failed to create branch")
+
+                        let checkout_cmd = Command::new("git")
+                            .arg("checkout")
+                            .arg(key)
+                            .current_dir(dir)
+                            .output()
+                            .expect("git checkout failed to start");
+
+                        if checkout_cmd.status.success() {
+                            Ok(())
+                        } else {
+                            Err("Failed to create and switch to branch")
+                        }
                     }
                 },
                 Err(_) => Err("Failed fetching origin"),
             }
 
-                    },
+        },
         None => Err("Could not find the right path to change branches")
     }
 }
