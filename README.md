@@ -7,6 +7,7 @@ Set three environment variables:
 - `JIRA_HOST`: The URL of your Jira installation; example `https://example.atlassian.net`
 - `JIRA_USER`: Your Jira user name
 - `JIRA_PASS`: Your Jira password
+
 Have a package.json file with `bugs.jiraIdentifier` set to the project identifier in jira.
 
 ## What it does
