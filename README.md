@@ -3,6 +3,7 @@ Grab top 5 tickets from a Jira Project, creates and/or switches to the branch wi
 
 ## Installation
 Download and add to your `$PATH`.
+
 Set three environment variables:
 - `JIRA_HOST`: The URL of your Jira installation; example `https://example.atlassian.net`
 - `JIRA_USER`: Your Jira user name
