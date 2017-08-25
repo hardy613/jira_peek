@@ -7,10 +7,10 @@ use std::env;
 use serde_json::Value;
 
 pub struct Params {
-   pub user: String,
-   pub pass: String,
-   pub host: String,
-   pub project: String,
+    pub user: String,
+    pub pass: String,
+    pub host: String,
+    pub project: String,
 }
 
 impl Params {
@@ -20,10 +20,10 @@ impl Params {
             Ok(file) => {
                 match serde_json::from_reader::<File, Value>(file) {
                     Ok(contents) => {
-                           match contents["bugs"]["jiraIdentifier"].as_str() {
-                               Some(project) => Ok(project.to_owned()),
-                               None => Err("Could not find bugs.jiraIdentifier")
-                           }
+                        match contents["bugs"]["jiraIdentifier"].as_str() {
+                            Some(project) => Ok(project.to_owned()),
+                            None => Err("Could not find bugs.jiraIdentifier")
+                        }
                     },
                     Err(_) => Err("Error reading from package.json")
                 }
@@ -46,7 +46,7 @@ impl Params {
         }
     }
 
-   pub fn new() -> Params {
+    pub fn new() -> Params {
         Params {
             user: env::var("JIRA_USER").expect("$JIRA_USER is not set."),
             pass: env::var("JIRA_PASS").expect("$JIRA_PASS is not set."),

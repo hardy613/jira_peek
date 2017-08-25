@@ -33,62 +33,62 @@ impl Jira {
     }
 
     pub fn start_ticket(key: &str) -> Result<(), &str>{
-    let mut path: Option<&str> = None;
-       
-    if Path::new("./.git").is_dir() {
-        path = Some("./");
-    } else if Path::new("./config/.git").is_dir() {
-        path = Some("./config/");
-    }
+        let mut path: Option<&str> = None;
 
-    match path {
-        Some(dir) => {
+        if Path::new("./.git").is_dir() {
+            path = Some("./");
+        } else if Path::new("./config/.git").is_dir() {
+            path = Some("./config/");
+        }
 
-            let fetch = Command::new("git")
-                .arg("fetch")
-                .arg("origin")
-                .current_dir(dir)
-                .output();
+        match path {
+            Some(dir) => {
 
-            match fetch {
-                Ok(_) => {
-                    let branch_cmd = Command::new("git") 
-                        .arg("checkout")
-                        .arg("-b")
-                        .arg(key)
-                        .arg("origin/develop")
-                        .current_dir(dir)
-                        .output()
-                        .expect("git checkout -b command failed to start");
-                    
-                    if branch_cmd.status.success() {
-                        println!("New branch {} created", key);
-                        Ok(())
-                    } else {
+                let fetch = Command::new("git")
+                    .arg("fetch")
+                    .arg("origin")
+                    .current_dir(dir)
+                    .output();
 
-                        let checkout_cmd = Command::new("git")
+                match fetch {
+                    Ok(_) => {
+                        let branch_cmd = Command::new("git") 
                             .arg("checkout")
+                            .arg("-b")
                             .arg(key)
+                            .arg("origin/develop")
                             .current_dir(dir)
                             .output()
-                            .expect("git checkout failed to start");
+                            .expect("git checkout -b command failed to start");
 
-                        if checkout_cmd.status.success() {
-                            println!("Changed to branch {}", key);
+                        if branch_cmd.status.success() {
+                            println!("New branch {} created", key);
                             Ok(())
                         } else {
-                            println!("Failed to create and switch to branch");
-                            Err("Commit or stash your changes and try again.")
-                        }
-                    }
-                },
-                Err(_) => Err("Failed fetching origin"),
-            }
 
-        },
-        None => Err("Could not find the right path to change branches")
+                            let checkout_cmd = Command::new("git")
+                                .arg("checkout")
+                                .arg(key)
+                                .current_dir(dir)
+                                .output()
+                                .expect("git checkout failed to start");
+
+                            if checkout_cmd.status.success() {
+                                println!("Changed to branch {}", key);
+                                Ok(())
+                            } else {
+                                println!("Failed to create and switch to branch");
+                                Err("Commit or stash your changes and try again.")
+                            }
+                        }
+                    },
+                    Err(_) => Err("Failed fetching origin"),
+                }
+
+            },
+            None => Err("Could not find the right path to change branches")
+        }
     }
-}
 
 
 }

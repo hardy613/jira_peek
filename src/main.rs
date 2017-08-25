@@ -29,9 +29,9 @@ fn main() {
                     resp.read_to_string(&mut body).unwrap();
 
                     let v: Value = serde_json::from_str(&body).unwrap();
-                    
+
                     let sep = "-------------------------------------------";
-                    
+
                     loop {
                         println!("\n{}", sep);
 
@@ -40,7 +40,7 @@ fn main() {
                         for issue in v["issues"].as_array().unwrap().iter() {
 
                             counter = counter + 1;
-                            
+
                             let key = issue["key"].as_str().unwrap();
                             let summary = issue["fields"]["summary"].as_str().unwrap();
 
@@ -48,7 +48,7 @@ fn main() {
                                      counter, 
                                      key, 
                                      summary                            
-                            );
+                                    );
                         }
 
 
@@ -84,7 +84,7 @@ fn main() {
                         println!("\n[{}] {}\n\nDescription:\n{}", t_key, t_summary, t_desc);
                         println!("\n{}", sep);
                         println!("\nCommands:\n\nPress Any key: Go back,\ns: Start ticket,\nq: Quit");
-                       
+
                         let mut command = String::new();
                         io::stdin().read_line(&mut command)
                             .expect("Failed to read line");
@@ -94,10 +94,10 @@ fn main() {
                             "q"     => break,
                             _       => continue,
                         };
-                        
+
                         break;
                     }
-                    
+
                 },
                 code => {
                     let mut text = String::new();
