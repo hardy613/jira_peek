@@ -28,11 +28,7 @@ fn main() {
 
                     let v: Value = serde_json::from_str(&body).unwrap();
 
-                    let sep = "-------------------------------------------";
-
                     loop {
-                        println!("\n{}", sep);
-
                         let mut counter = 0;
 
                         for issue in v["issues"].as_array().unwrap().iter() {
@@ -66,7 +62,6 @@ fn main() {
                                 _ => 0,
                             },
                             Err(_)  => {
-                                println!("\n{}", sep);
                                 println!("\nError: Please enter a number");
                                 continue;
                             },
@@ -78,9 +73,7 @@ fn main() {
                         let t_summary = &t_fields["summary"].as_str().unwrap();
                         let t_desc = &t_fields["description"].as_str().unwrap();
 
-                        println!("\n{}", sep);
                         println!("\n[{}] {}\n\nDescription:\n{}", t_key, t_summary, t_desc);
-                        println!("\n{}", sep);
                         println!("\nCommands:\n\nPress Any key: Go back,\ns: Start ticket,\nq: Quit");
 
                         let mut command = String::new();
