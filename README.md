@@ -2,14 +2,12 @@
 Grab top 5 tickets from a Jira Project, creates and/or switches to the branch with the same jira key.
 
 ## Installation
-Download and add to your `$PATH`.
-
-Set three environment variables:
-- `JIRA_HOST`: The URL of your Jira installation; example `https://example.atlassian.net`
-- `JIRA_USER`: Your Jira user name
-- `JIRA_PASS`: Your Jira password
-
-Have a package.json file with `bugs.jiraIdentifier` set to the project identifier in jira.
+- Download and add to your `$PATH`.
+- Set three environment variables:
+  - `JIRA_HOST`: The URL of your Jira installation; example `https://example.atlassian.net`
+  - `JIRA_USER`: Your Jira user name
+  - `JIRA_PASS`: Your Jira password
+- Have a package.json file with `bugs.jiraIdentifier` set to the project identifier in jira.
 
 ## What it does
 - Sends a request to `JIRA_HOST` to get the top five issues from a project assigned to the `JIRA_USER` with a `status` of `to do` and `type` of `sub-task` order by priority.
