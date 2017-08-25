@@ -7,8 +7,6 @@ extern crate serde_json;
 use std::io::{self, Read};
 use serde_json::Value;
 use reqwest::StatusCode;
-use reqwest::header::ContentType;
-
 
 mod tom;
 use tom::Params;
