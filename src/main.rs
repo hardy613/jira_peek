@@ -8,16 +8,15 @@ use std::io::{self, Read};
 use serde_json::Value;
 use reqwest::StatusCode;
 
-mod tom;
-use tom::Params;
+mod params;
+use params::Params;
 
 mod jira;
-use jira::Jira;
 
 fn main() {
     let params = Params::new();
 
-    match Jira::fetch_top_5(&params) {
+    match jira::fetch_top_5(&params) {
         Ok(mut resp)    => {
             match resp.status() {
                 StatusCode::Ok => {
@@ -29,7 +28,7 @@ fn main() {
                     let v: Value = serde_json::from_str(&body).unwrap();
 
                     loop {
-                        let mut counter = 0;
+                        let mut counter: usize = 0;
 
                         for issue in v["issues"].as_array().unwrap().iter() {
 
@@ -52,22 +51,20 @@ fn main() {
                         io::stdin().read_line(&mut input)
                             .expect("Failed to read line");
 
-                        let input = match input.trim().parse() {
-                            Ok(num) => match num {
-                                1 => 0,
-                                2 => 1,
-                                3 => 2,
-                                4 => 3,
-                                5 => 4,
-                                _ => 0,
-                            },
-                            Err(_)  => {
-                                println!("\nError: Please enter a number");
-                                continue;
-                            },
-                        };
+                        let parsed_input: usize = input.trim().parse().expect("Numbers only");
 
-                        let ticket = &v["issues"][input];
+                        if parsed_input <= 0 {
+                            println!("Number is too load");
+                            continue;
+                        }
+
+                        if parsed_input - 1 >= counter {
+                            println!("Number is too high");
+                            continue;
+                        }
+
+                        let index = parsed_input - 1;
+                        let ticket = &v["issues"][index];
                         let t_fields = &ticket["fields"];
                         let t_key = &ticket["key"].as_str().unwrap();
                         let t_summary = &t_fields["summary"].as_str().unwrap();
@@ -81,9 +78,9 @@ fn main() {
                             .expect("Failed to read line");
 
                         match command.trim() {
-                            "s"    => Jira::start_ticket(&t_key).unwrap(),
-                            "q"     => break,
-                            _       => continue,
+                            "s" => jira::start_ticket(&t_key).unwrap(),
+                            "q" => break,
+                            _   => continue,
                         };
 
                         break;
