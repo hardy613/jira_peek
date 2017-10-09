@@ -32,18 +32,15 @@ fn main() {
 
                         for issue in v["issues"].as_array().unwrap().iter() {
 
-                            counter = counter + 1;
+                            counter += 1;
 
                             let key = issue["key"].as_str().unwrap();
-                            let summary = issue["fields"]["summary"].as_str().unwrap();
+                            let summary = issue["fields"]["summary"].as_str()
+                                .unwrap();
 
                             println!("\n{}) [{}] {}", 
-                                     counter, 
-                                     key, 
-                                     summary                            
-                                    );
+                                     counter, key, summary);
                         }
-
 
                         println!("Select your ticket");
 
@@ -51,27 +48,33 @@ fn main() {
                         io::stdin().read_line(&mut input)
                             .expect("Failed to read line");
 
-                        let parsed_input: usize = input.trim().parse().expect("Numbers only");
+                        let parsed_input = match input.trim().parse::<usize>() {
+                            Ok(num) => {
+                                if num <= 0 {
+                                    println!("Number is too low");
+                                    continue;
+                                } else if num - 1 >= counter {
+                                    println!("Number is too high");
+                                    continue;
+                                }
+                                num - 1
+                            }
+                            _ => {
+                                println!("Numbers only");
+                                continue;
+                            }
+                        };
 
-                        if parsed_input <= 0 {
-                            println!("Number is too load");
-                            continue;
-                        }
-
-                        if parsed_input - 1 >= counter {
-                            println!("Number is too high");
-                            continue;
-                        }
-
-                        let index = parsed_input - 1;
-                        let ticket = &v["issues"][index];
+                        let ticket = &v["issues"][parsed_input];
                         let t_fields = &ticket["fields"];
                         let t_key = &ticket["key"].as_str().unwrap();
                         let t_summary = &t_fields["summary"].as_str().unwrap();
                         let t_desc = &t_fields["description"].as_str().unwrap();
 
-                        println!("\n[{}] {}\n\nDescription:\n{}", t_key, t_summary, t_desc);
-                        println!("\nCommands:\n\nPress Any key: Go back,\ns: Start ticket,\nq: Quit");
+                        println!("\n[{}] {}\n\nDescription:\n{}",
+                                 t_key, t_summary, t_desc);
+                        println!("\nCommands:\nPress Any key: Go back"); 
+                        println!("\ns: Start ticket\nq: Quit");
 
                         let mut command = String::new();
                         io::stdin().read_line(&mut command)
