@@ -1,6 +1,6 @@
 [root]
 name = "jira_peek"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "futures 0.1.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
