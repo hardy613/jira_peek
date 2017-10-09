@@ -8,16 +8,15 @@ use std::io::{self, Read};
 use serde_json::Value;
 use reqwest::StatusCode;
 
-mod tom;
-use tom::Params;
+mod params;
+use params::Params;
 
 mod jira;
-use jira::Jira;
 
 fn main() {
     let params = Params::new();
 
-    match Jira::fetch_top_5(&params) {
+    match jira::fetch_top_5(&params) {
         Ok(mut resp)    => {
             match resp.status() {
                 StatusCode::Ok => {
@@ -29,22 +28,19 @@ fn main() {
                     let v: Value = serde_json::from_str(&body).unwrap();
 
                     loop {
-                        let mut counter = 0;
+                        let mut counter: usize = 0;
 
                         for issue in v["issues"].as_array().unwrap().iter() {
 
-                            counter = counter + 1;
+                            counter += 1;
 
                             let key = issue["key"].as_str().unwrap();
-                            let summary = issue["fields"]["summary"].as_str().unwrap();
+                            let summary = issue["fields"]["summary"].as_str()
+                                .unwrap();
 
                             println!("\n{}) [{}] {}", 
-                                     counter, 
-                                     key, 
-                                     summary                            
-                                    );
+                                     counter, key, summary);
                         }
-
 
                         println!("Select your ticket");
 
@@ -52,38 +48,42 @@ fn main() {
                         io::stdin().read_line(&mut input)
                             .expect("Failed to read line");
 
-                        let input = match input.trim().parse() {
-                            Ok(num) => match num {
-                                1 => 0,
-                                2 => 1,
-                                3 => 2,
-                                4 => 3,
-                                5 => 4,
-                                _ => 0,
-                            },
-                            Err(_)  => {
-                                println!("\nError: Please enter a number");
+                        let parsed_input = match input.trim().parse::<usize>() {
+                            Ok(num) => {
+                                if num <= 0 {
+                                    println!("Number is too low");
+                                    continue;
+                                } else if num - 1 >= counter {
+                                    println!("Number is too high");
+                                    continue;
+                                }
+                                num - 1
+                            }
+                            _ => {
+                                println!("Numbers only");
                                 continue;
-                            },
+                            }
                         };
 
-                        let ticket = &v["issues"][input];
+                        let ticket = &v["issues"][parsed_input];
                         let t_fields = &ticket["fields"];
                         let t_key = &ticket["key"].as_str().unwrap();
                         let t_summary = &t_fields["summary"].as_str().unwrap();
                         let t_desc = &t_fields["description"].as_str().unwrap();
 
-                        println!("\n[{}] {}\n\nDescription:\n{}", t_key, t_summary, t_desc);
-                        println!("\nCommands:\n\nPress Any key: Go back,\ns: Start ticket,\nq: Quit");
+                        println!("\n[{}] {}\n\nDescription:\n{}",
+                                 t_key, t_summary, t_desc);
+                        println!("\nCommands:\nPress Any key: Go back"); 
+                        println!("\ns: Start ticket\nq: Quit");
 
                         let mut command = String::new();
                         io::stdin().read_line(&mut command)
                             .expect("Failed to read line");
 
                         match command.trim() {
-                            "s"    => Jira::start_ticket(&t_key).unwrap(),
-                            "q"     => break,
-                            _       => continue,
+                            "s" => jira::start_ticket(&t_key).unwrap(),
+                            "q" => break,
+                            _   => continue,
                         };
 
                         break;
