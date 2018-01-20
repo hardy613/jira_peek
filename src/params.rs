@@ -1,5 +1,6 @@
 extern crate serde;
 extern crate serde_json;
+extern crate clap;
 
 use std::path::Path;
 use std::fs::File;
@@ -46,7 +47,9 @@ impl Params {
         }
     }
 
-    pub fn new() -> Params {
+    pub fn new(args: clap::ArgMatches) -> Params {
+        println!("{:?}", args);
+
         Params {
             user: env::var("JIRA_USER").expect("$JIRA_USER is not set."),
             pass: env::var("JIRA_PASS").expect("$JIRA_PASS is not set."),
