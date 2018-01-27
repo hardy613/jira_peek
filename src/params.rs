@@ -48,10 +48,18 @@ impl Params {
     }
 
     pub fn new(args: clap::ArgMatches) -> Params {
-        println!("{:?}", args);
+        let mut parsed_user = String::new();
+
+        if let Some(user) = args.value_of("user") {
+           parsed_user = user.to_string();
+        }
+
+
+
+        println!("{:?}", parsed_user);
 
         Params {
-            user: env::var("JIRA_USER").expect("$JIRA_USER is not set."),
+            user: parsed_user,
             pass: env::var("JIRA_PASS").expect("$JIRA_PASS is not set."),
             host: env::var("JIRA_HOST").expect("$JIRA_HOST is not set."),
             project: Params::project_from_file().unwrap(), 
