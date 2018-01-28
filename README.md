@@ -1,3 +1,5 @@
+# This is a dead project, please see hardy613/tijira for the active repro
+
 # jira_peek
 Grab top 5 tickets from a Jira Project, creates and/or switches to the branch with the same jira key.
 
